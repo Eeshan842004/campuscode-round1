@@ -1,0 +1,177 @@
+/* Blend-in animation kit for the Landing, Login and Register pages.
+   Everything is scoped under .site, so the dashboard can't be affected.
+   Only transform, opacity, clip-path and background-size are animated, so nothing shifts the layout. */
+
+.site {
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1);   /* fast start, long soft landing: entrances */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);        /* hovers */
+  --ease-in: cubic-bezier(.4, 0, 1, 1);           /* leaving */
+  --t-micro: 140ms;
+  --t-hover: 240ms;
+  --t-reveal: 950ms;
+}
+
+/* ---------- colour touches inside the brand palette ---------- */
+.site ::selection { background: #7665ff; color: #fff; }
+.site input, .site textarea { caret-color: #7665ff; }
+.site .tnum { font-variant-numeric: tabular-nums; }      /* numbers don't jiggle while changing */
+
+/* ---------- 1. LineReveal: lines rise from behind a mask ---------- */
+.site .lr { display: flex; flex-direction: column; }   /* flex items do not collapse margins, so the masks add up to exactly the live heading height */
+.lr-mask {
+  display: block; overflow: hidden;
+  padding: .08em .06em; margin: -.08em -.06em;              /* room for strokes, layout unchanged */
+}
+.lr-line {
+  display: block; transform: translateY(110%);
+  transition: transform var(--t-reveal) var(--ease-out-expo);
+}
+.lr.in .lr-line { transform: none; }
+
+/* ---------- 2. InkWord: outline draws in, then fills on hover ---------- */
+.ink-clip { display: inline-block; }
+.lr .ink-clip { display: block; }   /* a whole-line word, so it cannot stretch the line box */
+.lr .ink-clip {
+  clip-path: inset(-10% 100% -10% -5%);
+  transition: clip-path 1200ms var(--ease-out-expo) 380ms;
+}
+.lr.in .ink-clip { clip-path: inset(-10% -5% -10% -5%); }
+
+.ink {
+  color: transparent;
+  -webkit-text-stroke: var(--stroke-w, 1px) var(--stroke-c, #777777);   /* measured from the live site */
+  background: linear-gradient(var(--ink-fill, #7665ff), var(--ink-fill, #7665ff)) 0 0 / 0% 100% no-repeat;
+  -webkit-background-clip: text; background-clip: text;
+  transition: background-size 420ms var(--ease-in), -webkit-text-stroke-color 300ms;
+}
+/* the live site turns the outline purple on hover, so the wipe fills with the same purple */
+.ink:hover { background-size: 100% 100%; -webkit-text-stroke-color: #7665ff; transition: background-size 700ms var(--ease-out-expo), -webkit-text-stroke-color 300ms; }
+
+/* ---------- 3. Buttons ---------- */
+/* magnet: the button follows the cursor a little; the arrow follows a bit more */
+.magnet { transform: translate(var(--mgx, 0px), var(--mgy, 0px)); transition: transform 420ms var(--ease-out-expo), translate 300ms var(--ease-out); }
+.magnet .arrow-loop { translate: calc(var(--mgx, 0px) * .6) calc(var(--mgy, 0px) * .6); transition: translate 420ms var(--ease-out-expo); }
+
+/* outlined buttons: ink wipes up from the bottom. Their normal text colour comes from a plain class. */
+.btn-wipe { position: relative; isolation: isolate; overflow: hidden; transition: color var(--t-hover) var(--ease-out), transform 420ms var(--ease-out-expo), translate 300ms var(--ease-out); }
+.btn-wipe::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; background: #111111;
+  transform: scaleY(0); transform-origin: top;            /* leaves upward */
+  transition: transform 460ms var(--ease-out-expo);
+}
+.btn-wipe:hover::before, .btn-wipe:focus-visible::before { transform: scaleY(1); transform-origin: bottom; }
+.btn-wipe:hover, .btn-wipe:focus-visible { color: #ffffff; }
+.btn-wipe:hover .arrow-loop, .btn-wipe:focus-visible .arrow-loop { color: #a8e62e; }
+
+/* black buttons: a tiny press */
+.btn-press:active { transform: scale(.98); transition: transform 80ms; }
+
+/* the arrow that loops out and back in */
+.arrow-loop { display: inline-grid; overflow: hidden; vertical-align: middle; line-height: 1; }
+.arrow-loop > span { grid-area: 1 / 1; transition: transform 460ms var(--ease-out-expo); }
+.arrow-loop > span:last-child { transform: translate(-120%, 120%); }
+:is(a, button):hover .arrow-loop > span:first-child,
+:is(a, button):focus-visible .arrow-loop > span:first-child { transform: translate(120%, -120%); }
+:is(a, button):hover .arrow-loop > span:last-child,
+:is(a, button):focus-visible .arrow-loop > span:last-child { transform: none; }
+
+/* text links: underline draws in from the left, leaves to the right */
+.link-draw { background: linear-gradient(currentColor, currentColor) 100% 100% / 0% 1px no-repeat; transition: background-size 360ms var(--ease-out-expo), color var(--t-micro), transform .25s; }
+.link-draw:hover, .link-draw:focus-visible { background-position: 0% 100%; background-size: 100% 1px; color: #7665ff; }
+
+/* ---------- 4. Spotlight cards and rows ---------- */
+.spot { position: relative; isolation: isolate; }
+.spot::before {   /* soft glow under the cursor */
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(320px circle at var(--gx, 70%) var(--gy, 20%), rgb(118 101 255 / .10), transparent 70%);
+  opacity: 0; transition: opacity var(--t-hover) var(--ease-out);
+}
+.spot::after {    /* the 1px border lights up near the cursor */
+  content: ""; position: absolute; inset: -1px; padding: 1px; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(200px circle at var(--gx, 50%) var(--gy, 50%), rgb(118 101 255 / .65), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity var(--t-hover) var(--ease-out);
+}
+.spot:hover::before, .spot:hover::after, .spot:focus-within::before { opacity: 1; }
+
+/* Arena rows: content shifts right, the arrow turns from ↗ to → */
+.row-shift > .row-inner { transition: transform 420ms var(--ease-out-expo); }
+.row-shift:hover > .row-inner, .row-shift:focus-within > .row-inner { transform: translateX(18px); }
+.row-shift .row-arrow { display: inline-block; transition: transform 420ms var(--ease-out-expo), color var(--t-micro); }
+.row-shift:hover .row-arrow { transform: rotate(45deg); color: #7665ff; }
+
+/* LIVE status dot breathes */
+.dot-live { position: relative; }
+.dot-live::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: inherit; animation: breathe 2s var(--ease-out) infinite; }
+@keyframes breathe { from { transform: scale(1); opacity: .5; } to { transform: scale(2.6); opacity: 0; } }
+
+/* ---------- 5. Marquee ---------- */
+.vm { overflow: hidden; }
+.vm-track { display: flex; width: max-content; will-change: transform; }
+.vm-row { display: flex; }
+
+/* ---------- 6. Background depth (hero dots, orbit) ---------- */
+.depth { transform: translate3d(calc(var(--px, 0) * var(--d, 10) * 1px), calc(var(--py, 0) * var(--d, 10) * 1px), 0); }
+.spin { transform-origin: center; animation: spin var(--dur, 80s) linear infinite; }
+@keyframes spin { to { transform: rotate(1turn); } }
+
+/* ---------- 7. Story card opens as it scrolls in (on the INNER frame, glow stays outside) ---------- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .story-open {
+      animation: story-open linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 35%;
+    }
+  }
+}
+@keyframes story-open {
+  from { clip-path: inset(9% 7% round 44px); transform: scale(.97); }
+  to   { clip-path: inset(0 round var(--story-r, 24px)); transform: none; }
+}
+
+/* ---------- 8. Numbers roll, footer letters rise ---------- */
+.roll { display: inline-block; overflow: hidden; vertical-align: bottom; font-variant-numeric: tabular-nums; }
+.roll-in { display: inline-block; animation: roll-in 480ms var(--ease-out-expo); }
+@keyframes roll-in { from { transform: translateY(100%); } }
+
+.rise { display: flex; }
+.rise > span { display: inline-block; transform: translateY(60%); opacity: 0; transition: transform 1100ms var(--ease-out-expo), opacity 900ms var(--ease-out); }
+.rise.in > span { transform: none; opacity: 1; }
+
+/* ---------- 9. Auth forms ---------- */
+/* the purple to lime top line draws itself when the card appears */
+.auth-line { transform-origin: left; animation: line-draw 1000ms var(--ease-out-expo) 150ms both; }
+@keyframes line-draw { from { transform: scaleX(0); } }
+
+/* the label turns purple while its field is focused; the ring fades in */
+.m-field label, .m-field .label { transition: color var(--t-micro); }
+.m-field:focus-within label, .m-field:focus-within .label { color: #7665ff; }
+.m-field .m-control { transition: border-color var(--t-micro), box-shadow var(--t-hover) var(--ease-out), background .25s; }
+.m-field .m-control:focus-within { border-color: #7665ff; box-shadow: 0 0 0 4px rgb(118 101 255 / .14); }
+
+/* the 18+ checkbox: fills ink and a lime tick pops in */
+.chk { appearance: none; width: 20px; height: 20px; border: 1px solid #767676; border-radius: 2px; background: #fff; display: inline-grid; place-content: center; cursor: pointer; transition: background-color var(--t-micro), border-color var(--t-micro); }
+.chk::after { content: ""; width: 11px; height: 11px; background: #a8e62e; clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); transform: scale(0); transition: transform 300ms cubic-bezier(.34, 1.56, .64, 1); }
+.chk:checked { background: #111111; border-color: #111111; }
+.chk:checked::after { transform: scale(1); }
+
+/* busy black button: a lime line sweeps along its bottom edge */
+.btn-busy { position: relative; overflow: hidden; }
+.btn-busy[aria-busy="true"]::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 40%; background: #a8e62e; animation: sweep 900ms var(--ease-out) infinite; }
+@keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+
+/* Login and Register: the card stays, the headline cross-fades */
+.auth-card { view-transition-name: auth-card; }
+.auth-head { view-transition-name: auth-head; }
+::view-transition-group(auth-card) { animation-duration: 420ms; animation-timing-function: cubic-bezier(.16, 1, .3, 1); }
+::view-transition-old(auth-head), ::view-transition-new(auth-head) { animation-duration: 260ms; }
+
+/* ---------- reduced motion: everything settles at its final state ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .site *, .site *::before, .site *::after { animation: none !important; transition-duration: 1ms !important; }
+  .lr-line, .rise > span { transform: none !important; opacity: 1 !important; }
+  .lr .ink-clip { clip-path: none !important; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
