@@ -281,3 +281,6 @@
 /* the looping arrow keeps the line height the plain glyph had, so button sizes match the live page */
 .lp .arrow-loop { line-height: inherit; }
 
+
+/* Landing logo: the original uses the darker lime for the third bar. */
+.lp-nav .cc-mark span:nth-child(3) { background: #82b91a; }
