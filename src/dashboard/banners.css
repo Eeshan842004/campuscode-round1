@@ -1,0 +1,51 @@
+/* Event banners drawn in HTML and CSS (the live portal shows uploaded poster images in these spots).
+   One design size is 1200 x 350; --u is "one design pixel", so everything scales with the card width. */
+.event-banner { container-type: inline-size; display: flex; align-items: center; max-height: 220px; overflow: hidden; border-radius: 12px; }
+/* The live portal's poster is an <img> with max-height 220px and object-fit: cover, so on a wide card it is centre-cropped. */
+.eb { --u: calc(100cqw / 1200); position: relative; width: 100%; aspect-ratio: 1200 / 350; overflow: hidden; font-family: Inter, system-ui, sans-serif; color: #111; }
+.eb i, .eb u { font-style: normal; text-decoration: none; }
+.eb-tile { position: absolute; display: flex; align-items: center; justify-content: center; background: #111; }
+.eb-tile i { display: block; transform: skew(-17deg); }
+.eb-tile i:nth-child(1) { background: #fff; }
+.eb-tile i:nth-child(2) { background: #7665ff; }
+.eb-tile i:nth-child(3) { background: #8bcf19; }
+.eb-copy { position: absolute; }
+.eb-line { position: absolute; display: block; }
+
+/* ReBuild '26. Measured from the live poster (rendered there in Liberation Sans Bold, Arial's metric twin; Arial's taller caps are
+   compensated for with slightly smaller sizes and a little letter-spacing so the ink matches). */
+.eb-rebuild { background: #fff; --ink: #101418; font-family: Arial, "Liberation Sans", Helvetica, sans-serif; }
+.eb-rebuild .eb-slab { position: absolute; top: 0; left: calc(1123.6 * var(--u)); width: calc(260 * var(--u)); height: 100%; transform-origin: 0 0; transform: skewX(-15.38deg);
+  background: linear-gradient(90deg, #f3fae8 0 calc(40 * var(--u)), #eff6e4 calc(40 * var(--u)) calc(75.4 * var(--u)), #fafafb calc(75.4 * var(--u)) calc(79.9 * var(--u)), #edebfb calc(79.9 * var(--u)) calc(115.4 * var(--u)), #f0eefe calc(115.4 * var(--u))); }
+.eb-rebuild .eb-tile { box-sizing: border-box; padding-right: calc(37 * var(--u)); left: calc(62.7 * var(--u)); top: calc(80.8 * var(--u)); width: calc(187.5 * var(--u)); height: calc(188.4 * var(--u)); border-radius: calc(38 * var(--u)); gap: calc(18.2 * var(--u)); background: #090909; }
+.eb-rebuild .eb-tile i { width: calc(20.2 * var(--u)); height: calc(104.5 * var(--u)); border-radius: calc(3 * var(--u)); transform: skew(-16.7deg); }
+.eb-rebuild .eb-copy { inset: 0; }
+.eb-rebuild .eb-copy > * { position: absolute; left: calc(294 * var(--u)); margin: 0; white-space: nowrap; }
+.eb-rebuild small { top: calc(56.2 * var(--u)); font: 700 calc(19.2 * var(--u))/1 Arial, "Liberation Sans", sans-serif; letter-spacing: calc(3.5 * var(--u)); color: #5c636e; }
+.eb-rebuild .eb-title { top: calc(83.2 * var(--u)); font: 700 calc(88.4 * var(--u))/1 Arial, "Liberation Sans", sans-serif; letter-spacing: calc(2.57 * var(--u)); color: var(--ink); }
+.eb-rebuild .eb-title em { font-style: normal; color: #7665ff; margin-left: calc(-15.4 * var(--u)); }
+.eb-rebuild strong { left: calc(292.4 * var(--u)); top: calc(187.4 * var(--u)); font: 700 calc(25.4 * var(--u))/1 Arial, "Liberation Sans", sans-serif; letter-spacing: calc(2.42 * var(--u)); color: var(--ink); }
+.eb-pills { top: calc(246.1 * var(--u)); display: flex; gap: calc(13.6 * var(--u)); }
+.eb-pills u { box-sizing: border-box; display: inline-flex; align-items: center; gap: calc(5.1 * var(--u)); height: calc(32.7 * var(--u)); padding: calc(5.4 * var(--u)) calc(8.5 * var(--u)) 0 calc(10.3 * var(--u)); border: calc(1 * var(--u)) solid #e5e7ed; border-radius: 999px; background: #f7f7fa; font: 700 calc(15.2 * var(--u))/1 Arial, "Liberation Sans", sans-serif; letter-spacing: calc(.98 * var(--u)); color: var(--ink); white-space: nowrap; }
+.eb-pills u::before { content: ""; width: calc(9 * var(--u)); height: calc(9 * var(--u)); border-radius: 50%; background: #7665ff; flex: none; margin-top: calc(-5.4 * var(--u)); }
+.eb-pills u:nth-child(2)::before { background: #8bcf19; }
+.eb-rebuild .eb-line { left: 0; right: 0; bottom: 0; height: calc(6 * var(--u)); background: linear-gradient(90deg, #7665ff 0 62%, #8bcf19 62%); }
+
+/* FirstCommit '26 quiz */
+.eb-quiz { background-color: #f7f7f4; background-image: linear-gradient(#f3f3ef 1px, transparent 1px), linear-gradient(90deg, #f3f3ef 1px, transparent 1px); background-size: calc(40 * var(--u)) calc(40 * var(--u)); }
+.eb-blob { position: absolute; border-radius: 50%; }
+.eb-blob-a { width: calc(225 * var(--u)); height: calc(225 * var(--u)); left: calc(-65.9 * var(--u)); top: calc(-78.8 * var(--u)); background: #eef3d8; }
+.eb-blob-b { width: calc(254 * var(--u)); height: calc(254 * var(--u)); right: calc(-84 * var(--u)); bottom: calc(-89 * var(--u)); background: #e9e7ff; }
+.eb-quiz .eb-tile { left: calc(70 * var(--u)); top: calc(114.5 * var(--u)); width: calc(119.5 * var(--u)); height: calc(119.5 * var(--u)); border-radius: calc(22 * var(--u)); gap: calc(15 * var(--u)); background: #090909; }
+.eb-quiz .eb-tile i { width: calc(17 * var(--u)); height: calc(74 * var(--u)); border-radius: calc(2 * var(--u)); transform: skew(-10deg); }
+.eb-quiz .eb-copy { left: calc(212.7 * var(--u)); top: calc(124.8 * var(--u)); }
+.eb-quiz small { display: block; font: 400 calc(19.4 * var(--u))/1 "DM Mono", ui-monospace, monospace; letter-spacing: .06em; color: #92928d; }
+.eb-quiz .eb-title { display: block; margin-top: calc(17.6 * var(--u)); font: 800 calc(29.6 * var(--u))/1.08 Inter, sans-serif; letter-spacing: -0.01em; color: #090909; }
+.eb-quiz .eb-title + .eb-title { margin-top: calc(5.2 * var(--u)); }
+.eb-quiz .eb-purple { color: #7665ff; }
+.eb-mono { display: block; margin-top: calc(35.6 * var(--u)); font: 500 calc(16.4 * var(--u))/1 "DM Mono", ui-monospace, monospace; letter-spacing: .05em; white-space: nowrap; color: #333; }
+.eb-mono + .eb-mono { margin-top: calc(13.2 * var(--u)); font-size: calc(17.4 * var(--u)); }
+.eb-big { position: absolute; right: calc(29 * var(--u)); top: calc(106 * var(--u)); text-align: center; }
+.eb-big strong { display: block; font: 900 calc(151 * var(--u))/1 Inter, sans-serif; letter-spacing: -0.04em; color: #e9e9e2; }
+.eb-big span { display: block; margin-top: calc(10 * var(--u)); font: 500 calc(15.6 * var(--u))/1 "DM Mono", ui-monospace, monospace; letter-spacing: .14em; color: #e3e2dc; }
+.eb-line-lime { left: 0; right: 0; bottom: 0; height: calc(6 * var(--u)); background: #a9e631; }
